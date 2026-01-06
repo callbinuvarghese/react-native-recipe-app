@@ -251,3 +251,35 @@ Added .gitignore
 Check the code in to git repo and push it.
 
 You can deploy the API to "render.com" from git repo
+
+Create a WEB Service
+from the github repo with the backend directory
+Create ENV Variables from .env  ( just PORT and DATABASE_URL values, can omit NODE_ENV and EXPO_PUBLIC... as it is for frontend)
+
+On the render.com logs after deployment
+==> Detected service running on port 5001
+==> Docs on specifying a port: https://render.com/docs/web-services#port-binding
+==> Running 'node src/server.js'
+Server is running on PORT: 5001
+
+Test the public URL (without the port)
+
+➜  backend curl https://recipe-app-rest-api-gmif.onrender.com/api/health
+{"success":true}%
+➜  backend curl https://recipe-app-rest-api-gmif.onrender.com/api/favorites/124 | jq
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   180    0   180    0     0    133      0 --:--:--  0:00:01 --:--:--   133
+[
+  {
+    "id": 2,
+    "userId": "124",
+    "recipeId": 432,
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2",
+    "createdAt": "2026-01-06T01:21:55.477Z"
+  }
+]

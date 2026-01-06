@@ -1,0 +1,12 @@
+
+#https://www.youtube.com/watch?v=fLIl6jypzkI
+#https://github.com/burakorkmez/react-native-recipe-app
+
+#API - https://www.themealdb.com/
+
+➜  react-native mkdir fullstack-recipe-app
+➜  react-native mkdir fullstack-recipe-app/backend
+➜  react-native mkdir fullstack-recipe-app/mobile
+➜  react-native touch fullstack-recipe-app/Instructions.txt
+➜  react-native cd fullstack-recipe-app
+➜  fullstack-recipe-app code .

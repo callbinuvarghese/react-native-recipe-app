@@ -1,0 +1,253 @@
+➜  backend npm init -y
+Wrote to /Users/binu.b.varghese/source/react-native/fullstack-recipe-app/backend/package.json:
+
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
+
+# Install dependencies
+➜  backend npm i express@5.1.0 @neondatabase/serverless@1.0.0 cors@2.8.5 dotenv@
+16.5.0 drizzle-orm@0.44.2 cron@4.3.0
+
+added 84 packages, and audited 85 packages in 23s
+
+23 packages are looking for funding
+  run npm fund for details
+
+found 0 vulnerabilities
+
+# Install Dev dependencies
+➜  backend npm i -D drizzle-kit@0.31.1
+➜  backend npm i -D nodemon@3.1.10
+
+➜  backend touch server.js
+# put code
+
+# edit package.json
+"scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+"type": "module",
+
+
+Run the dev version
+➜  backend npm run dev
+
+> backend@1.0.0 dev
+> nodemon server.js
+
+[nodemon] 3.1.10
+[nodemon] to restart at any time, enter rs
+[nodemon] watching path(s): .
+[nodemon] watching extensions: js,mjs,cjs,json
+[nodemon] starting node server.js
+Server is running on port 5001#
+
+➜  backend touch .env
+
+➜  backend mkdir src
+➜  backend mv server.js src
+➜  backend mkdir src/config
+➜  backend touch src/config/env.js
+# Code env.js and update server.js with health
+➜  backend curl localhost:5001/api/health
+{"status":"OK","timestamp":"2026-01-06T00:09:18.753Z"}%
+
+
+Sign into the postgress DB neon.com with the gmail id
+Created a project named recipe-app-react-native
+Connect to DB
+Copy the connection string
+Update that in the .env DATABASE_URL
+
+➜  backend mkdir src/db
+➜  backend touch src/db/schema.js
+# code schema
+
+➜  backend touch src/config/db.js
+# code db.js importing the schema
+
+➜  backend touch drizzle.config.js
+# code drizzle.config.js for the drizzle kit
+# with out folder as src/db/migrations
+
+# SQL + Metadata code generate ( javascript to SQL code - top-down schema gen)
+➜  backend npx drizzle-kit generate
+No config path provided, using default 'drizzle.config.js'
+Reading config file '/Users/binu.b.varghese/source/react-native/fullstack-recipe-app/backend/drizzle.config.js'
+1 tables
+favorites 8 columns 0 indexes 0 fks
+
+[✓] Your SQL migration file ➜ src/db/migrations/0000_elite_randall.sql 🚀
+➜  backend
+
+# Generated sql + meta data at the src/db/migrations
+
+# Now generate the tables on database with database migration 
+➜  backend npx drizzle-kit migrate
+No config path provided, using default 'drizzle.config.js'
+Reading config file '/Users/binu.b.varghese/source/react-native/fullstack-recipe-app/backend/drizzle.config.js'
+Using '@neondatabase/serverless' driver for database querying
+ Warning  '@neondatabase/serverless' can only connect to remote Neon/Vercel Postgres/Supabase instances through a websocket
+
+# Now you can see the table(s) on the neon postgres database
+
+➜  backend touch src/config/cron.js
+
+# Test DB POST
+➜  backend curl http://localhost:5001/api/favorites \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "userId": "123",
+    "recipeId": "456",
+    "title": "Delicious Pancakes",
+    "image": "http://example.com/pancakes.jpg",
+    "cookTime": "15 mins",
+    "servings": "4"
+  }'
+# result below as formatted; Notice fields [id,createdAt] created in response
+{
+  "id":1,
+  "userId":"123",
+  "recipeId":456,
+  "title":"Delicious Pancakes",
+  "image":"http://example.com/pancakes.jpg",
+  "cookTime":"15 mins","servings":"4",
+  "createdAt":"2026-01-06T01:16:08.956Z"
+}
+
+# row inserted in neon postgres database
+
+➜  backend curl http://localhost:5001/api/favorites \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "userId": "124",
+    "recipeId": "432",
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2"
+  }'
+{"id":2,"userId":"124","recipeId":432,"title":"Yummy Chicken","image":"http://example.com/chicken.jpg","cookTime":"20 mins","servings":"2","createdAt":"2026-01-06T01:21:55.477Z"}%
+
+
+➜  backend curl http://localhost:5001/api/favorites \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "userId": "125",
+    "recipeId": "432",
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2"
+  }'
+➜  backend curl http://localhost:5001/api/favorites \
+  -H "Content-Type: application/json" \
+  -X POST \
+  -d '{
+    "userId": "125",
+    "recipeId": "432",
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2"
+  }'
+{"id":3,"userId":"125","recipeId":432,"title":"Yummy Chicken","image":"http://example.com/chicken.jpg","cookTime":"20 mins","servings":"2","createdAt":"2026-01-06T02:13:57.260Z"}%
+
+#Application AuthN managed by clerk.com
+
+➜  backend curl -X DELETE \
+  -H "Content-Type: application/json" \
+  -v \
+  http://localhost:5001/api/favorites/123/456
+
+Host localhost:5001 was resolved.
+IPv6: ::1
+IPv4: 127.0.0.1
+  Trying [::1]:5001...
+Connected to localhost (::1) port 5001
+> DELETE /api/favorites/123/456 HTTP/1.1
+> Host: localhost:5001
+> User-Agent: curl/8.7.1
+> Accept: /
+> Content-Type: application/json
+>
+Request completely sent off
+< HTTP/1.1 200 OK
+< X-Powered-By: Express
+< Content-Type: application/json; charset=utf-8
+< Content-Length: 43
+< ETag: W/"2b-zWuyHAltwAkg4V+PlcZUUomnKDs"
+< Date: Tue, 06 Jan 2026 02:11:17 GMT
+< Connection: keep-alive
+< Keep-Alive: timeout=5
+<
+Connection #0 to host localhost left intact
+{"message":"Favorite removed successfully"}%
+
+➜  backend curl http://localhost:5001/api/favorites/124 | jq
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   180  100   180    0     0   1354      0 --:--:-- --:--:-- --:--:--  1363
+[
+  {
+    "id": 2,
+    "userId": "124",
+    "recipeId": 432,
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2",
+    "createdAt": "2026-01-06T01:21:55.477Z"
+  }
+]
+
+➜  backend curl "http://localhost:5001/api/favorites?limit=20&offset=0" | jq
+
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100   359  100   359    0     0   1916      0 --:--:-- --:--:-- --:--:--  1919
+[
+  {
+    "id": 2,
+    "userId": "124",
+    "recipeId": 432,
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2",
+    "createdAt": "2026-01-06T01:21:55.477Z"
+  },
+  {
+    "id": 3,
+    "userId": "125",
+    "recipeId": 432,
+    "title": "Yummy Chicken",
+    "image": "http://example.com/chicken.jpg",
+    "cookTime": "20 mins",
+    "servings": "2",
+    "createdAt": "2026-01-06T02:13:57.260Z"
+  }
+]
+
+
+Added .gitignore
+
+Check the code in to git repo and push it.
+
+You can deploy the API to "render.com" from git repo
